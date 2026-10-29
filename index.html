@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prism Embed Builder · Prism Protocol</title>
+  <meta name="description" content="Build Discord embeds and webhook messages with a live preview, limit checks and code export, all in your browser." />
+  <meta name="theme-color" content="#07080f" />
+  <meta property="og:title" content="Prism Embed Builder · Prism Protocol" />
+  <meta property="og:description" content="Build Discord embeds and webhook messages with a live preview, limit checks and code export, all in your browser." />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/prism.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <style>:root{--accent:#7C85FF;--accent-2:#EB459E}</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./"><span class="mark">◇</span><b>PRISM</b><span>Embed Builder</span></a>
+    <nav>
+      <a class="btn small" href="https://github.com/krishyaa06/prism-embed-builder" target="_blank" rel="noreferrer">★ GitHub</a>
+    </nav>
+  </header>
+  <main class="wrap">
+    <section class="hero">
+      <p class="eyebrow">💬 Discord Tools</p>
+      <h1>Discord embeds, <em>pixel-perfect.</em></h1>
+      <p class="lead">Design webhook messages with a live Discord preview, limit checks and one-click export to JSON, discord.js, discord.py or cURL. Nothing leaves your browser unless you hit Send.</p>
+    </section>
+
+    <section class="toolbar card">
+      <div class="row">
+        <button class="btn small" id="sample">Sample</button>
+        <button class="btn small" id="import">Import JSON</button>
+        <button class="btn small" id="share">Copy share link</button>
+        <span class="sep"></span>
+        <label class="field inline">Draft
+          <select id="drafts" aria-label="Saved drafts"><option value="">Autosaved</option></select>
+        </label>
+        <button class="btn small" id="saveDraft">Save as…</button>
+        <button class="btn small ghost danger" id="delDraft" title="Delete selected draft">Delete</button>
+        <span class="spacer"></span>
+        <span id="total" class="pill">0 / 6000</span>
+        <button class="btn small ghost danger" id="clear">Clear</button>
+      </div>
+    </section>
+
+    <section class="grid builder">
+      <div class="stack" id="editorCol">
+        <div class="card">
+          <div class="card-title"><h2>Message</h2></div>
+          <div class="stack">
+            <label class="field"><span class="lbl">Content <span class="cnt" data-cnt="content"></span></span>
+              <textarea data-k="content" rows="3" class="sm" placeholder="Plain message text, supports **markdown**"></textarea>
+            </label>
+            <div class="grid g2 tight">
+              <label class="field"><span class="lbl">Username <span class="cnt" data-cnt="username"></span></span><input type="text" data-k="username" placeholder="Webhook default" /></label>
+              <label class="field"><span class="lbl">Avatar URL</span><input type="url" data-k="avatar_url" placeholder="https://…/avatar.png" /></label>
+            </div>
+          </div>
+        </div>
+        <div id="embeds" class="stack"></div>
+        <button class="btn" id="addEmbed">＋ Add embed</button>
+
+        <div class="card">
+          <div class="card-title"><h2>Send to webhook</h2><span id="hookStatus" class="pill"></span></div>
+          <div class="stack">
+            <label class="field">Webhook URL
+              <input type="password" id="hook" autocomplete="off" spellcheck="false" placeholder="https://discord.com/api/webhooks/ID/TOKEN" />
+            </label>
+            <div class="row">
+              <label class="check"><input type="checkbox" id="rememberHook" /> Remember on this device</label>
+              <label class="check"><input type="checkbox" id="showHook" /> Show</label>
+              <span class="spacer"></span>
+              <button class="btn primary" id="send">Send message</button>
+            </div>
+            <p class="muted small note">The webhook URL is a secret. It is only stored in this browser if you tick “Remember”, and it is never included in share links or exports.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack preview-col">
+        <div class="card">
+          <div class="card-title"><h2>Live preview</h2><span id="validity" class="pill"></span></div>
+          <div class="discord" id="preview" aria-live="polite"></div>
+          <ul class="issues" id="issues"></ul>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <div class="tabs" id="tabs">
+              <button class="on" data-v="json">JSON</button><button data-v="djs">discord.js</button><button data-v="dpy">discord.py</button><button data-v="curl">cURL</button>
+            </div>
+            <div class="row">
+              <button class="btn small" id="copy">Copy</button>
+              <button class="btn small" id="dl">Download</button>
+            </div>
+          </div>
+          <pre class="out" id="out"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="importDlg" class="dlg">
+    <form method="dialog" class="stack">
+      <h2>Import JSON</h2>
+      <p class="muted small">Paste a webhook payload, a single embed, an array of embeds, or a Discohook backup.</p>
+      <textarea id="importText" spellcheck="false" class="code" placeholder='{"content": "Hello", "embeds": [{"title": "Hi"}]}'></textarea>
+      <div class="row"><label class="btn small" for="importFile">Open file</label><input type="file" id="importFile" accept=".json,application/json" hidden /><span class="spacer"></span><button class="btn small ghost" value="cancel">Cancel</button><button class="btn small primary" id="doImport" value="ok">Import</button></div>
+    </form>
+  </dialog>
+
+  <footer class="foot">
+    <span>◇ Prism Embed Builder · Part of <a href="https://dc.gg/prismprotocol" target="_blank" rel="noreferrer">Prism Protocol</a></span>
+    <span><a href="https://github.com/krishyaa06/prism-embed-builder" target="_blank" rel="noreferrer">Source</a> · MIT License · Runs 100% in your browser</span>
+  </footer>
+  <script src="js/prism.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
