@@ -1,0 +1,31 @@
+{
+  "name": "prism-embed-builder",
+  "version": "1.0.0",
+  "description": "Discord embed & webhook builder with live preview, limit checks and code export, all in your browser.",
+  "scripts": {
+    "test": "node --test",
+    "start": "npx --yes serve .",
+    "screenshots": "node scripts/screenshots.js"
+  },
+  "keywords": [
+    "discord",
+    "discord-embed",
+    "embed-builder",
+    "discord-webhook",
+    "discord.js",
+    "discord.py",
+    "developer-tools",
+    "vanilla-js",
+    "prism-protocol"
+  ],
+  "author": "Soumya Bhandare (krishyaa06)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krishyaa06/prism-embed-builder.git"
+  },
+  "homepage": "https://krishyaa06.github.io/prism-embed-builder/",
+  "engines": {
+    "node": ">=18.17"
+  }
+}
